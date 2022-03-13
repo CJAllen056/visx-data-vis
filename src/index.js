@@ -1,10 +1,18 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+
+import { ApolloClient, InMemoryCache, ApolloProvider, useQuery, gql } from "@apollo/client";
+
 import App from './App';
 
+const client = new ApolloClient({
+  uri: 'https://fakerql.nplan.io/',
+  cache: new InMemoryCache()
+});
+
 ReactDOM.render(
-  <React.StrictMode>
+  <ApolloProvider client={client}>
     <App />
-  </React.StrictMode>,
+  </ApolloProvider>,
   document.getElementById('root')
 );
