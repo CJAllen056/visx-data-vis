@@ -6,7 +6,7 @@ import { ApolloClient, InMemoryCache, ApolloProvider, useQuery, gql } from "@apo
 import App from './App';
 
 const client = new ApolloClient({
-  uri: 'https://fakerql.nplan.io/',
+  uri: 'https://fakerql.nplan.io/graphql',
   cache: new InMemoryCache()
 });
 
