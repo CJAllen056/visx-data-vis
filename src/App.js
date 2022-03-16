@@ -9,33 +9,43 @@ const getTopics = (topics, updateTopics) => {
 }
 
 const App = () => {
-  const { loading, error, data } = useQuery(posts(1000));
-  const { graphData, updateData } = useState({});
-  const topics = []
+  const { loading, error, data } = useQuery(posts(5000));
+  const { graphData, updateGraphData } = useState([]);
+  // const topics = {};
+  const times = {};
 
   console.log(data);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error</p>;
 
-  data.posts.forEach(d => {
-    const topic = d.likelyTopics[0].label;
+  data.posts.forEach(post => {
+    // const topic = post.likelyTopics[0].label;
+    let time = new Date();
+    time.setTime(post.createdAt);
+    time = time.toLocaleDateString();
 
-    if (!topics[topic]) {
-      topics[topic] = 1;
+    if (times[time]) {
+      times[time]++;
     } else {
-      topics[topic]++;
+      times[time] = 1;
     }
+
+    // if (topics[topic]) {
+    //   topics[topic]++;
+    // } else {
+    //   topics[topic] = 1;
+    // }
   });
 
-  console.log(topics);
+  console.log(times);
 
   return (
     <div>
       <XYChart height={300} xScale={{ type: "time" }} yScale={{ type: "linear" }}>
         <Axis orientation="bottom" />
         <Axis orientation="left" />
-        {/*<LineSeries data={} />*/}
+        {/*<LineSeries data={graphData} />*/}
       </XYChart>
       <ul>
         {
