@@ -41,10 +41,12 @@ const Chart = props => {
 
   return (
     <div>
-      <ChartFilter
-        options={data.posts[0].likelyTopics}
-        handleChange={e => setGraphData(formatData(data, e.target.value))}
-      />
+      <div className="chart-filters">
+        <ChartFilter
+          options={data.posts[0].likelyTopics}
+          handleChange={e => setGraphData(formatData(data, e.target.value))}
+        />
+      </div>
       <XYChart height={300} xScale={{ type: "time" }} yScale={{ type: "linear" }}>
         <AnimatedAxis orientation="bottom" />
         <AnimatedAxis orientation="left" />
