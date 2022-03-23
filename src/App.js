@@ -12,11 +12,7 @@ const App = () => {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error</p>;
 
-  return (
-    <div>
-      <Chart data={data} />
-    </div>
-  );
+  return <Chart data={data} />;
 }
 
 export default App;

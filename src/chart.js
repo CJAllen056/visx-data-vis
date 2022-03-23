@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { XYChart, AnimatedAxis, AnimatedGrid, AnimatedLineSeries } from "@visx/xychart";
 
-const formatData = (data) => {
+const formatData = (data, filter) => {
   const dates = [
     { x: 'January', y: 0},
     { x: 'February', y: 0},
@@ -18,9 +18,11 @@ const formatData = (data) => {
   ]
 
   data.posts.forEach(post => {
-    let date = new Date();
-    date.setTime(post.createdAt);    
-    dates[date.getMonth()].y++
+    if (filter === "All" || filter == post.likelyTopics[0].label) {
+      let date = new Date();
+      date.setTime(post.createdAt);    
+      dates[date.getMonth()].y++;
+    }
   });
 
   return dates;
@@ -36,12 +38,21 @@ const Chart = props => {
   };
 
   return (
-    <XYChart height={300} xScale={{ type: "time" }} yScale={{ type: "linear" }}>
-      <AnimatedAxis orientation="bottom" />
-      <AnimatedAxis orientation="left" />
-      <AnimatedGrid columns={false} />
-      <AnimatedLineSeries dataKey="line_01" data={graphData} {...accessors} />
-    </XYChart>
+    <div>
+      <label for="topics-selection">Filter by topic: </label>
+      <select id="topics-selection" onChange={e => setGraphData(formatData(data, e.target.value))}>
+        <option value="All">Show All</option>
+        {data.posts[0].likelyTopics.map(topic => {
+          return <option value={topic.label}>{topic.label}</option>
+        })}
+      </select>
+      <XYChart height={300} xScale={{ type: "time" }} yScale={{ type: "linear" }}>
+        <AnimatedAxis orientation="bottom" />
+        <AnimatedAxis orientation="left" />
+        <AnimatedGrid columns={false} />
+        <AnimatedLineSeries dataKey="line_01" data={graphData} {...accessors} />
+      </XYChart>
+    </div>
   );
 }
 
