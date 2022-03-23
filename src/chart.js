@@ -3,7 +3,7 @@ import { XYChart, AnimatedAxis, AnimatedGrid, AnimatedLineSeries, Tooltip } from
 
 import ChartFilter from './filter';
 
-const formatData = (data, filters) => {
+const formatData = (data, filter) => {
   const dates = [
     { x: 'January', y: 0},
     { x: 'February', y: 0},
@@ -20,12 +20,7 @@ const formatData = (data, filters) => {
   ]
 
   data.posts.forEach(post => {
-    const topic = post.likelyTopics[0].label;
-    const author = `${post.author.firstName} ${post.author.lastName}`
-
-    if ((filters.topic === "All" || filters.topic === topic)
-      && (filters.author === "All" || filters.author === author)) {
-      console.log(topic, author);
+    if (filter === "All" || filter == post.likelyTopics[0].label) {
       let date = new Date();
       date.setTime(post.createdAt);    
       dates[date.getMonth()].y++;
@@ -35,44 +30,21 @@ const formatData = (data, filters) => {
   return dates;
 }
 
-const getTopics = data => {
-  return [... new Set(Array.from(data, d => d.likelyTopics[0].label))];
-}
-
-const getAuthors = data => {
-  return [... new Set(Array.from(data, d => `${d.author.firstName} ${d.author.lastName}`))]
-}
-
 const Chart = props => {
   const { data } = props;
-  const [topicFilter, setTopicFilter] = useState("All");
-  const [authorFilter, setAuthorFilter] = useState("All");
-  const [graphData, setGraphData] = useState(formatData(data, { topic: topicFilter, author: authorFilter }));
+  const [graphData, setGraphData] = useState(formatData(data, "All"));
 
   const accessors = {
     xAccessor: (d) => new Date(`${d.x} 2019`),
     yAccessor: (d) => d.y,
   };
 
-  const applyFilter = (setFilterFunc, value) => {
-    setFilterFunc(value);
-    setGraphData(formatData(data, { topic: topicFilter, author: authorFilter }));
-  }
-
   return (
     <div>
-      <div className="chart-filters">
-        <ChartFilter
-          filterLabel="topic"
-          options={getTopics(data.posts)}
-          handleChange={e => applyFilter(setTopicFilter, e.target.value)}
-        />
-        <ChartFilter
-          filterLabel="author"
-          options={getAuthors(data.posts)}
-          handleChange={e => applyFilter(setAuthorFilter, e.target.value)}
-        />
-      </div>
+      <ChartFilter
+        options={data.posts[0].likelyTopics}
+        handleChange={e => setGraphData(formatData(data, e.target.value))}
+      />
       <XYChart height={300} xScale={{ type: "time" }} yScale={{ type: "linear" }}>
         <AnimatedAxis orientation="bottom" />
         <AnimatedAxis orientation="left" />
