@@ -1,0 +1,11 @@
+.chart-filters {
+	display: flex;
+	margin:  0.5em 2em;
+	justify-content: center;
+	font-family: -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif;
+	font-weight: 200;
+}
+
+.chart-filters>div {
+	margin: 0 0.5em;
+}
