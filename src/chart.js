@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { XYChart, AnimatedAxis, AnimatedGrid, AnimatedLineSeries, Tooltip } from "@visx/xychart";
 
+import ChartFilter from './filter';
+
 const formatData = (data, filter) => {
   const dates = [
     { x: 'January', y: 0},
@@ -39,13 +41,10 @@ const Chart = props => {
 
   return (
     <div>
-      <label htmlFor="topics-selection">Filter by topic: </label>
-      <select id="topics-selection" onChange={e => setGraphData(formatData(data, e.target.value))}>
-        <option value="All">Show All</option>
-        {data.posts[0].likelyTopics.map(topic => {
-          return <option key={topic.label} value={topic.label}>{topic.label}</option>
-        })}
-      </select>
+      <ChartFilter
+        options={data.posts[0].likelyTopics}
+        handleChange={e => setGraphData(formatData(data, e.target.value))}
+      />
       <XYChart height={300} xScale={{ type: "time" }} yScale={{ type: "linear" }}>
         <AnimatedAxis orientation="bottom" />
         <AnimatedAxis orientation="left" />
