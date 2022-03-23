@@ -9,39 +9,36 @@ const getTopics = (topics, updateTopics) => {
 }
 
 const formatData = (data) => {
-  const dates = []
+  const dates = [
+    { x: 'January', y: 0},
+    { x: 'February', y: 0},
+    { x: 'March', y: 0},
+    { x: 'April', y: 0},
+    { x: 'May', y: 0},
+    { x: 'June', y: 0},
+    { x: 'July', y: 0},
+    { x: 'August', y: 0},
+    { x: 'September', y: 0},
+    { x: 'October', y: 0},
+    { x: 'November', y: 0},
+    { x: 'December', y: 0},
+  ]
 
   data.posts.forEach(post => {
-    // const topic = post.likelyTopics[0].label;
     let date = new Date();
-    date.setTime(post.createdAt);
-    date = date.toLocaleDateString();
-
-    const index = dates.findIndex(d => d.x === date);
-
-    if (index >= 0) {
-      dates[index].y++;
-    } else {
-      dates.push({ x: date, y: 1 });
-    }
-
-    // if (topics[topic]) {
-    //   topics[topic]++;
-    // } else {
-    //   topics[topic] = 1;
-    // }
+    date.setTime(post.createdAt);    
+    dates[date.getMonth()].y++
   });
 
-  return dates.sort((a, b) => new Date(b.x) - new Date(a.x));
+  return dates;
 }
 
 const App = () => {
-  const { loading, error, data } = useQuery(posts(5000));
+  const { loading, error, data } = useQuery(posts(1000));
   const [graphData, setGraphData] = useState([]);
-  // const topics = {};
 
   const accessors = {
-    xAccessor: (d) => new Date(`${d.x}`),
+    xAccessor: (d) => new Date(`${d.x} 2019`),
     yAccessor: (d) => d.y,
   };
 
