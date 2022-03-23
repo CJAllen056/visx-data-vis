@@ -8,27 +8,21 @@ const getTopics = (topics, updateTopics) => {
 
 }
 
-const App = () => {
-  const { loading, error, data } = useQuery(posts(5000));
-  const { graphData, updateGraphData } = useState([]);
-  // const topics = {};
-  const times = {};
-
-  console.log(data);
-
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error</p>;
+const formatData = (data) => {
+  const dates = []
 
   data.posts.forEach(post => {
     // const topic = post.likelyTopics[0].label;
-    let time = new Date();
-    time.setTime(post.createdAt);
-    time = time.toLocaleDateString();
+    let date = new Date();
+    date.setTime(post.createdAt);
+    date = date.toLocaleDateString();
 
-    if (times[time]) {
-      times[time]++;
+    const index = dates.findIndex(d => d.x === date);
+
+    if (index >= 0) {
+      dates[index].y++;
     } else {
-      times[time] = 1;
+      dates.push({ x: date, y: 1 });
     }
 
     // if (topics[topic]) {
@@ -38,14 +32,32 @@ const App = () => {
     // }
   });
 
-  console.log(times);
+  return dates.sort((a, b) => new Date(b.x) - new Date(a.x));
+}
+
+const App = () => {
+  const { loading, error, data } = useQuery(posts(5000));
+  const [graphData, setGraphData] = useState([]);
+  // const topics = {};
+
+  const accessors = {
+    xAccessor: (d) => new Date(`${d.x}`),
+    yAccessor: (d) => d.y,
+  };
+
+  console.log(data);
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error</p>;
+
+  console.log(formatData(data));
 
   return (
     <div>
       <XYChart height={300} xScale={{ type: "time" }} yScale={{ type: "linear" }}>
         <Axis orientation="bottom" />
         <Axis orientation="left" />
-        {/*<LineSeries data={graphData} />*/}
+        <LineSeries dataKey="line_01" data={formatData(data)} {...accessors} />
       </XYChart>
       <ul>
         {
