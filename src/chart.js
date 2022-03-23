@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { XYChart, AnimatedAxis, AnimatedGrid, AnimatedLineSeries } from "@visx/xychart";
+import { XYChart, AnimatedAxis, AnimatedGrid, AnimatedLineSeries, Tooltip } from "@visx/xychart";
 
 const formatData = (data, filter) => {
   const dates = [
@@ -30,7 +30,7 @@ const formatData = (data, filter) => {
 
 const Chart = props => {
   const { data } = props;
-  const [graphData, setGraphData] = useState(formatData(data));
+  const [graphData, setGraphData] = useState(formatData(data, "All"));
 
   const accessors = {
     xAccessor: (d) => new Date(`${d.x} 2019`),
@@ -39,11 +39,11 @@ const Chart = props => {
 
   return (
     <div>
-      <label for="topics-selection">Filter by topic: </label>
+      <label htmlFor="topics-selection">Filter by topic: </label>
       <select id="topics-selection" onChange={e => setGraphData(formatData(data, e.target.value))}>
         <option value="All">Show All</option>
         {data.posts[0].likelyTopics.map(topic => {
-          return <option value={topic.label}>{topic.label}</option>
+          return <option key={topic.label} value={topic.label}>{topic.label}</option>
         })}
       </select>
       <XYChart height={300} xScale={{ type: "time" }} yScale={{ type: "linear" }}>
@@ -51,6 +51,15 @@ const Chart = props => {
         <AnimatedAxis orientation="left" />
         <AnimatedGrid columns={false} />
         <AnimatedLineSeries dataKey="line_01" data={graphData} {...accessors} />
+        <Tooltip
+          snapTooltipToDatumX
+          snapTooltipToDatumY
+          renderTooltip={({ tooltipData }) => {
+            const { datum } = tooltipData.nearestDatum;            
+
+            return <div>{`${datum.x}: ${datum.y} posts`}</div>;
+          }}
+        />
       </XYChart>
     </div>
   );
